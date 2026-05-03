@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none;" aria-hidden="true">
+  <!-- All flags use a 3:2 aspect ratio (60x40 viewBox) for consistency. -->
+
+  <!-- ENGLISH (UK Union Jack) -->
+  <symbol id="flag-en" viewBox="0 0 60 40">
+    <rect width="60" height="40" fill="#012169"/>
+    <!-- White diagonals (St Andrew + St Patrick base) -->
+    <path d="M0,0 L60,40 M60,0 L0,40" stroke="#fff" stroke-width="8"/>
+    <!-- Red diagonals (St Patrick) -->
+    <path d="M0,0 L60,40 M60,0 L0,40" stroke="#C8102E" stroke-width="3" clip-path="url(#stp-clip)"/>
+    <!-- Big white cross (St George base) -->
+    <path d="M30,0 V40 M0,20 H60" stroke="#fff" stroke-width="13"/>
+    <!-- Big red cross (St George) -->
+    <path d="M30,0 V40 M0,20 H60" stroke="#C8102E" stroke-width="8"/>
+    <defs>
+      <clipPath id="stp-clip">
+        <polygon points="0,0 30,0 0,20"/>
+        <polygon points="60,0 30,0 60,20"/>
+        <polygon points="60,40 30,40 60,20"/>
+        <polygon points="0,40 30,40 0,20"/>
+      </clipPath>
+    </defs>
+  </symbol>
+
+  <!-- FRENCH (tricolore: bleu blanc rouge) -->
+  <symbol id="flag-fr" viewBox="0 0 60 40">
+    <rect width="20" height="40" x="0" fill="#0055A4"/>
+    <rect width="20" height="40" x="20" fill="#FFFFFF"/>
+    <rect width="20" height="40" x="40" fill="#EF4135"/>
+  </symbol>
+
+  <!-- RUSSIAN (white-blue-red horizontal) -->
+  <symbol id="flag-ru" viewBox="0 0 60 40">
+    <rect width="60" height="13.33" y="0" fill="#FFFFFF"/>
+    <rect width="60" height="13.33" y="13.33" fill="#0039A6"/>
+    <rect width="60" height="13.34" y="26.66" fill="#D52B1E"/>
+  </symbol>
+
+  <!-- SPANISH (rojo-amarillo-rojo with simplified coat placeholder) -->
+  <symbol id="flag-es" viewBox="0 0 60 40">
+    <rect width="60" height="10" y="0" fill="#AA151B"/>
+    <rect width="60" height="20" y="10" fill="#F1BF00"/>
+    <rect width="60" height="10" y="30" fill="#AA151B"/>
+    <!-- Simplified coat as small marker (placed off-center as in real flag) -->
+    <g transform="translate(18,15)">
+      <rect width="8" height="10" fill="#AD1519" opacity="0.85" rx="1"/>
+      <rect width="8" height="10" fill="none" stroke="#C7B37F" stroke-width="0.4"/>
+    </g>
+  </symbol>
+
+  <!-- UKRAINIAN (blue top, yellow bottom) -->
+  <symbol id="flag-uk" viewBox="0 0 60 40">
+    <rect width="60" height="20" y="0" fill="#0057B7"/>
+    <rect width="60" height="20" y="20" fill="#FFD700"/>
+  </symbol>
+
+  <!-- ITALIAN (verde bianco rosso) -->
+  <symbol id="flag-it" viewBox="0 0 60 40">
+    <rect width="20" height="40" x="0" fill="#009246"/>
+    <rect width="20" height="40" x="20" fill="#FFFFFF"/>
+    <rect width="20" height="40" x="40" fill="#CE2B37"/>
+  </symbol>
+
+  <!-- GERMAN (schwarz-rot-gold horizontal) -->
+  <symbol id="flag-de" viewBox="0 0 60 40">
+    <rect width="60" height="13.33" y="0" fill="#000000"/>
+    <rect width="60" height="13.33" y="13.33" fill="#DD0000"/>
+    <rect width="60" height="13.34" y="26.66" fill="#FFCE00"/>
+  </symbol>
+
+  <!-- HEBREW / Israel (white with two blue stripes and Star of David) -->
+  <symbol id="flag-he" viewBox="0 0 60 40">
+    <rect width="60" height="40" fill="#FFFFFF"/>
+    <rect width="60" height="4.5" y="5" fill="#0038B8"/>
+    <rect width="60" height="4.5" y="30.5" fill="#0038B8"/>
+    <!-- Star of David (two overlapping triangles) -->
+    <g transform="translate(30,20)" stroke="#0038B8" stroke-width="1.2" fill="none">
+      <polygon points="0,-7 6.06,3.5 -6.06,3.5"/>
+      <polygon points="0,7 6.06,-3.5 -6.06,-3.5"/>
+    </g>
+  </symbol>
+
+  <!-- PORTUGUESE (verde 2/5 + vermelho 3/5, simplified shield in middle) -->
+  <symbol id="flag-pt" viewBox="0 0 60 40">
+    <rect width="24" height="40" x="0" fill="#046A38"/>
+    <rect width="36" height="40" x="24" fill="#DA291C"/>
+    <!-- Armillary sphere placeholder (simple ring) at the join -->
+    <g transform="translate(24,20)">
+      <circle r="6" fill="#FFE000" stroke="#000" stroke-width="0.4"/>
+      <circle r="6" fill="none" stroke="#FFFFFF" stroke-width="0.4"/>
+      <rect x="-4" y="-3" width="8" height="6" fill="#FFFFFF" stroke="#C8102E" stroke-width="0.5"/>
+    </g>
+  </symbol>
+</svg>

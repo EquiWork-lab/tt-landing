@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/i18n.css">
 <style>
 :root {
   --bg: #0F0B0A;
@@ -86,6 +87,10 @@ a { color: inherit; text-decoration: none; }
   background: var(--gold);
   border-radius: 50%;
   animation: pulse 2s ease-in-out infinite;
+}
+.topbar-right { display: flex; align-items: center; gap: 16px; }
+@media (max-width: 640px) {
+  .topbar-right .topbar-status { display: none; }
 }
 @keyframes pulse {
   0%, 100% { opacity: 0.5; }
@@ -196,9 +201,12 @@ a { color: inherit; text-decoration: none; }
   align-items: flex-start;
 }
 .banner-icon {
-  font-size: 22px;
   flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  color: var(--gold);
 }
+.banner-icon svg { width: 100%; height: 100%; display: block; }
 .banner-text { color: var(--ink-2); font-size: 14px; line-height: 1.6; }
 .banner-text strong { color: var(--gold); font-weight: 500; }
 
@@ -594,45 +602,164 @@ a { color: inherit; text-decoration: none; }
 <body>
 <div class="page-grain"></div>
 
+<!-- Flag sprite inline (4KB, used by language switcher) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none;" aria-hidden="true">
+  <!-- All flags use a 3:2 aspect ratio (60x40 viewBox) for consistency. -->
+
+  <!-- ENGLISH (UK Union Jack) -->
+  <symbol id="flag-en" viewBox="0 0 60 40">
+    <rect width="60" height="40" fill="#012169"/>
+    <!-- White diagonals (St Andrew + St Patrick base) -->
+    <path d="M0,0 L60,40 M60,0 L0,40" stroke="#fff" stroke-width="8"/>
+    <!-- Red diagonals (St Patrick) -->
+    <path d="M0,0 L60,40 M60,0 L0,40" stroke="#C8102E" stroke-width="3" clip-path="url(#stp-clip)"/>
+    <!-- Big white cross (St George base) -->
+    <path d="M30,0 V40 M0,20 H60" stroke="#fff" stroke-width="13"/>
+    <!-- Big red cross (St George) -->
+    <path d="M30,0 V40 M0,20 H60" stroke="#C8102E" stroke-width="8"/>
+    <defs>
+      <clipPath id="stp-clip">
+        <polygon points="0,0 30,0 0,20"/>
+        <polygon points="60,0 30,0 60,20"/>
+        <polygon points="60,40 30,40 60,20"/>
+        <polygon points="0,40 30,40 0,20"/>
+      </clipPath>
+    </defs>
+  </symbol>
+
+  <!-- FRENCH (tricolore: bleu blanc rouge) -->
+  <symbol id="flag-fr" viewBox="0 0 60 40">
+    <rect width="20" height="40" x="0" fill="#0055A4"/>
+    <rect width="20" height="40" x="20" fill="#FFFFFF"/>
+    <rect width="20" height="40" x="40" fill="#EF4135"/>
+  </symbol>
+
+  <!-- RUSSIAN (white-blue-red horizontal) -->
+  <symbol id="flag-ru" viewBox="0 0 60 40">
+    <rect width="60" height="13.33" y="0" fill="#FFFFFF"/>
+    <rect width="60" height="13.33" y="13.33" fill="#0039A6"/>
+    <rect width="60" height="13.34" y="26.66" fill="#D52B1E"/>
+  </symbol>
+
+  <!-- SPANISH (rojo-amarillo-rojo with simplified coat placeholder) -->
+  <symbol id="flag-es" viewBox="0 0 60 40">
+    <rect width="60" height="10" y="0" fill="#AA151B"/>
+    <rect width="60" height="20" y="10" fill="#F1BF00"/>
+    <rect width="60" height="10" y="30" fill="#AA151B"/>
+    <!-- Simplified coat as small marker (placed off-center as in real flag) -->
+    <g transform="translate(18,15)">
+      <rect width="8" height="10" fill="#AD1519" opacity="0.85" rx="1"/>
+      <rect width="8" height="10" fill="none" stroke="#C7B37F" stroke-width="0.4"/>
+    </g>
+  </symbol>
+
+  <!-- UKRAINIAN (blue top, yellow bottom) -->
+  <symbol id="flag-uk" viewBox="0 0 60 40">
+    <rect width="60" height="20" y="0" fill="#0057B7"/>
+    <rect width="60" height="20" y="20" fill="#FFD700"/>
+  </symbol>
+
+  <!-- ITALIAN (verde bianco rosso) -->
+  <symbol id="flag-it" viewBox="0 0 60 40">
+    <rect width="20" height="40" x="0" fill="#009246"/>
+    <rect width="20" height="40" x="20" fill="#FFFFFF"/>
+    <rect width="20" height="40" x="40" fill="#CE2B37"/>
+  </symbol>
+
+  <!-- GERMAN (schwarz-rot-gold horizontal) -->
+  <symbol id="flag-de" viewBox="0 0 60 40">
+    <rect width="60" height="13.33" y="0" fill="#000000"/>
+    <rect width="60" height="13.33" y="13.33" fill="#DD0000"/>
+    <rect width="60" height="13.34" y="26.66" fill="#FFCE00"/>
+  </symbol>
+
+  <!-- HEBREW / Israel (white with two blue stripes and Star of David) -->
+  <symbol id="flag-he" viewBox="0 0 60 40">
+    <rect width="60" height="40" fill="#FFFFFF"/>
+    <rect width="60" height="4.5" y="5" fill="#0038B8"/>
+    <rect width="60" height="4.5" y="30.5" fill="#0038B8"/>
+    <!-- Star of David (two overlapping triangles) -->
+    <g transform="translate(30,20)" stroke="#0038B8" stroke-width="1.2" fill="none">
+      <polygon points="0,-7 6.06,3.5 -6.06,3.5"/>
+      <polygon points="0,7 6.06,-3.5 -6.06,-3.5"/>
+    </g>
+  </symbol>
+
+  <!-- PORTUGUESE (verde 2/5 + vermelho 3/5, simplified shield in middle) -->
+  <symbol id="flag-pt" viewBox="0 0 60 40">
+    <rect width="24" height="40" x="0" fill="#046A38"/>
+    <rect width="36" height="40" x="24" fill="#DA291C"/>
+    <!-- Armillary sphere placeholder (simple ring) at the join -->
+    <g transform="translate(24,20)">
+      <circle r="6" fill="#FFE000" stroke="#000" stroke-width="0.4"/>
+      <circle r="6" fill="none" stroke="#FFFFFF" stroke-width="0.4"/>
+      <rect x="-4" y="-3" width="8" height="6" fill="#FFFFFF" stroke="#C8102E" stroke-width="0.5"/>
+    </g>
+  </symbol>
+</svg>
+
+
 <header class="topbar">
   <div class="topbar-brand">TASTING<span class="amp">&</span>TOASTING</div>
   <div class="topbar-links">
-    <a href="#prototypes">Prototypes</a>
-    <a href="toasts.html">Toasts</a>
-    <a href="sommeliers.html">Sommeliers</a>
-    <a href="#about">About</a>
-    <a href="legal.html">Legal</a>
+    <a href="#prototypes" data-i18n="topbar.prototypes">Prototypes</a>
+    <a href="toasts.html" data-i18n="topbar.toasts">Toasts</a>
+    <a href="sommeliers.html" data-i18n="topbar.sommeliers">Sommeliers</a>
+    <a href="#about" data-i18n="topbar.about">About</a>
+    <a href="legal.html" data-i18n="topbar.legal">Legal</a>
   </div>
-  <div class="topbar-status">Pre-launch</div>
+  <div class="topbar-right">
+    <div class="topbar-status" data-i18n="topbar.status_prelaunch">Pre-launch</div>
+    <div class="lang-switcher">
+      <button class="lang-trigger" type="button" aria-label="Select language" aria-expanded="false">
+        <svg class="flag" viewBox="0 0 60 40"><use href="#flag-en"/></svg>
+        <span class="lang-trigger-code">EN</span>
+        <svg class="lang-chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4.5l3 3 3-3"/></svg>
+      </button>
+      <div class="lang-menu" role="menu">
+        <button class="lang-item" data-lang="en" role="menuitem"><svg class="flag" viewBox="0 0 60 40"><use href="#flag-en"/></svg><span class="lang-native">English</span><span class="lang-code">EN</span></button>
+        <button class="lang-item" data-lang="fr" role="menuitem"><svg class="flag" viewBox="0 0 60 40"><use href="#flag-fr"/></svg><span class="lang-native">Français</span><span class="lang-code">FR</span></button>
+        <button class="lang-item" data-lang="ru" role="menuitem"><svg class="flag" viewBox="0 0 60 40"><use href="#flag-ru"/></svg><span class="lang-native">Русский</span><span class="lang-code">RU</span></button>
+        <button class="lang-item" data-lang="es" role="menuitem"><svg class="flag" viewBox="0 0 60 40"><use href="#flag-es"/></svg><span class="lang-native">Español</span><span class="lang-code">ES</span></button>
+        <button class="lang-item" data-lang="uk" role="menuitem"><svg class="flag" viewBox="0 0 60 40"><use href="#flag-uk"/></svg><span class="lang-native">Українська</span><span class="lang-code">UK</span></button>
+        <button class="lang-item" data-lang="it" role="menuitem"><svg class="flag" viewBox="0 0 60 40"><use href="#flag-it"/></svg><span class="lang-native">Italiano</span><span class="lang-code">IT</span></button>
+        <button class="lang-item" data-lang="de" role="menuitem"><svg class="flag" viewBox="0 0 60 40"><use href="#flag-de"/></svg><span class="lang-native">Deutsch</span><span class="lang-code">DE</span></button>
+        <button class="lang-item" data-lang="he" role="menuitem"><svg class="flag" viewBox="0 0 60 40"><use href="#flag-he"/></svg><span class="lang-native">עברית</span><span class="lang-code">HE</span></button>
+        <button class="lang-item" data-lang="pt" role="menuitem"><svg class="flag" viewBox="0 0 60 40"><use href="#flag-pt"/></svg><span class="lang-native">Português</span><span class="lang-code">PT</span></button>
+      </div>
+    </div>
+  </div>
 </header>
+
+
 
 <section class="hero">
   <div class="hero-meta">
-    <span>Madrid · Valencia</span>
+    <span data-i18n="index.hero.meta_madrid">Madrid · Valencia</span>
     <span class="dot">·</span>
-    <span>Pre-launch · v0.1</span>
+    <span data-i18n="index.hero.meta_prelaunch">Pre-launch · v0.1</span>
     <span class="dot">·</span>
-    <span>Delaware Corp · 7494277</span>
+    <span data-i18n="index.hero.meta_corp">Delaware Corp · 7494277</span>
   </div>
   <h1 class="hero-headline">
-    A wine company<br>
-    <span class="em">tastes its way</span><br>
-    into Europe.
+    <span data-i18n="index.hero.title_line1">A wine company</span><br>
+    <span class="em" data-i18n="index.hero.title_em">tastes its way</span><br>
+    <span data-i18n="index.hero.title_line3">into Europe.</span>
   </h1>
-  <p class="hero-sub">
+  <p class="hero-sub" data-i18n="index.hero.sub">
     Tasting <span class="serif" style="font-style:italic; color: var(--wine-bright);">&amp;</span> Toasting is being built as a multi-functional wine experience company, tastings, toasts, gatherings. Below are the prototypes that show where we&rsquo;re going.
   </p>
   <div class="hero-actions">
-    <a href="#prototypes" class="hero-btn hero-btn-primary">Explore prototypes <span>↓</span></a>
-    <a href="#about" class="hero-btn hero-btn-ghost">About the company</a>
+    <a href="#prototypes" class="hero-btn hero-btn-primary"><span data-i18n="index.hero.btn_explore">Explore prototypes</span> <span>↓</span></a>
+    <a href="#about" class="hero-btn hero-btn-ghost" data-i18n="index.hero.btn_about">About the company</a>
   </div>
 </section>
 
 <div class="banner">
   <div class="banner-inner">
-    <div class="banner-icon">⚖️</div>
+    <div class="banner-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M5 21h14M6 8h12M3 14l3-6 3 6c0 1.5-1.34 3-3 3s-3-1.5-3-3zM15 14l3-6 3 6c0 1.5-1.34 3-3 3s-3-1.5-3-3z"/></svg></div>
     <div class="banner-text">
-      <strong>Pre-launch notice.</strong> The Tasting &amp; Toasting platform is in technical development and pre-licensing phase. No commercial wine sales, event ticketing, or paid services are offered through this website until all required Spanish licenses (alcohol distribution, sanitary registration, excise duty, and others) are obtained and the operating subsidiary <em>Tasting And Toasting SL</em> is fully registered and operational. Information presented here is for illustrative and informational purposes only.
+      <strong data-i18n="index.banner.notice">Pre-launch notice.</strong> <span data-i18n="index.banner.body">The Tasting &amp; Toasting platform is in technical development and pre-licensing phase. No commercial wine sales, event ticketing, or paid services are offered through this website until all required Spanish licenses (alcohol distribution, sanitary registration, excise duty, and others) are obtained and the operating subsidiary <em>Tasting And Toasting SL</em> is fully registered and operational. Information presented here is for illustrative and informational purposes only.</span>
     </div>
   </div>
 </div>
@@ -644,19 +771,19 @@ a { color: inherit; text-decoration: none; }
       <div class="announcement-mark">&amp;</div>
       <div>
         <div class="announcement-eyebrow">
-          <span>Announcement</span>
+          <span data-i18n="index.ann.toasts.eyebrow_announcement">Announcement</span>
           <span class="dot">·</span>
-          <span>Coming soon</span>
+          <span data-i18n="index.ann.toasts.eyebrow_coming">Coming soon</span>
         </div>
-        <div class="announcement-title">
+        <div class="announcement-title" data-i18n="index.ann.toasts.title">
           The <span class="em">toasts</span> side of T<span class="amp">&amp;</span>T.
         </div>
       </div>
     </div>
-    <div class="announcement-sub">
+    <div class="announcement-sub" data-i18n="index.ann.toasts.sub">
       A digital toastmaster, built into the game. Toasts in many cultures and languages, fitted to the moment, remembered the next morning.
     </div>
-    <span class="announcement-cta">Read more <span>→</span></span>
+    <span class="announcement-cta"><span data-i18n="index.ann.toasts.cta">Read more</span> <span>→</span></span>
   </a>
 
   <a class="announcement-card alt" href="sommeliers.html">
@@ -664,35 +791,35 @@ a { color: inherit; text-decoration: none; }
       <div class="announcement-mark">§</div>
       <div>
         <div class="announcement-eyebrow">
-          <span>For sommeliers</span>
+          <span data-i18n="index.ann.somm.eyebrow_for">For sommeliers</span>
           <span class="dot">·</span>
-          <span>Two sides</span>
+          <span data-i18n="index.ann.somm.eyebrow_two">Two sides</span>
         </div>
-        <div class="announcement-title">
+        <div class="announcement-title" data-i18n="index.ann.somm.title">
           Real <span class="em">sommeliers</span>, in the room and in the app.
         </div>
       </div>
     </div>
-    <div class="announcement-sub">
+    <div class="announcement-sub" data-i18n="index.ann.somm.sub">
       We work alongside Spanish sommelier associations and host live tastings. A digital sommelier sits inside the game when no human is in the room.
     </div>
-    <span class="announcement-cta">For sommeliers <span>→</span></span>
+    <span class="announcement-cta"><span data-i18n="index.ann.somm.cta">For sommeliers</span> <span>→</span></span>
   </a>
 </aside>
 
 <section class="section" id="prototypes">
-  <div class="section-label">The work, in motion</div>
-  <h2 class="section-title">Four <span class="em">prototypes</span>, one direction.</h2>
-  <p class="section-intro">
+  <div class="section-label" data-i18n="index.proto.section_label">The work, in motion</div>
+  <h2 class="section-title" data-i18n="index.proto.section_title">Four <span class="em">prototypes</span>, one direction.</h2>
+  <p class="section-intro" data-i18n="index.proto.section_intro">
     These are working visual prototypes, not the live product. Each one explores a different surface of what we&rsquo;re building. Click any to step inside and walk through the screens.
   </p>
 
   <div class="proto-grid">
 
     <a class="proto-card" href="prototype.html">
-      <div class="proto-card-meta"><span class="num">01</span> · Member &amp; subscription</div>
-      <h3>The <span class="em">brand</span> face.</h3>
-      <p>Subscription tiers, member dashboard, producer view, event booking. The cinematic prototype showing how someone enters the world of Tasting &amp; Toasting and what their first months look like.</p>
+      <div class="proto-card-meta" data-i18n="index.proto.card1.meta"><span class="num">01</span> · Member &amp; subscription</div>
+      <h3 data-i18n="index.proto.card1.title">The <span class="em">brand</span> face.</h3>
+      <p data-i18n="index.proto.card1.desc">Subscription tiers, member dashboard, producer view, event booking. The cinematic prototype showing how someone enters the world of Tasting &amp; Toasting and what their first months look like.</p>
       <div class="proto-card-screens">
         <span class="chip">Landing</span>
         <span class="chip">Subscription</span>
@@ -701,13 +828,13 @@ a { color: inherit; text-decoration: none; }
         <span class="chip">Producer</span>
         <span class="chip">Event</span>
       </div>
-      <div class="proto-card-cta">Open prototype <span>→</span></div>
+      <div class="proto-card-cta"><span data-i18n="index.proto.cta_open">Open prototype</span> <span>→</span></div>
     </a>
 
     <a class="proto-card" href="game-flow.html">
-      <div class="proto-card-meta"><span class="num">02</span> · Game flow</div>
-      <h3>The <span class="em">tasting</span> game.</h3>
-      <p>A blind tasting party game played across phones. Setup, wine reveals, scoring, and the moment everyone learns who guessed right. The core experience that gives the brand its name.</p>
+      <div class="proto-card-meta" data-i18n="index.proto.card2.meta"><span class="num">02</span> · Game flow</div>
+      <h3 data-i18n="index.proto.card2.title">The <span class="em">tasting</span> game.</h3>
+      <p data-i18n="index.proto.card2.desc">A blind tasting party game played across phones. Setup, wine reveals, scoring, and the moment everyone learns who guessed right. The core experience that gives the brand its name.</p>
       <div class="proto-card-screens">
         <span class="chip">Setup</span>
         <span class="chip">Wines</span>
@@ -716,13 +843,13 @@ a { color: inherit; text-decoration: none; }
         <span class="chip">Reveal</span>
         <span class="chip">After</span>
       </div>
-      <div class="proto-card-cta">Open prototype <span>→</span></div>
+      <div class="proto-card-cta"><span data-i18n="index.proto.cta_open">Open prototype</span> <span>→</span></div>
     </a>
 
     <a class="proto-card" href="operations.html">
-      <div class="proto-card-meta"><span class="num">03</span> · Operations</div>
-      <h3>The <span class="em">company</span>, working.</h3>
-      <p>Sign up, event scheduling, sommelier engagement, checkout, the tasting center calendar. The infrastructure side, what keeps the experience running in the background.</p>
+      <div class="proto-card-meta" data-i18n="index.proto.card3.meta"><span class="num">03</span> · Operations</div>
+      <h3 data-i18n="index.proto.card3.title">The <span class="em">company</span>, working.</h3>
+      <p data-i18n="index.proto.card3.desc">Sign up, event scheduling, sommelier engagement, checkout, the tasting center calendar. The infrastructure side, what keeps the experience running in the background.</p>
       <div class="proto-card-screens">
         <span class="chip">Sign up</span>
         <span class="chip">Events</span>
@@ -731,13 +858,13 @@ a { color: inherit; text-decoration: none; }
         <span class="chip">Tasting Center</span>
         <span class="chip">Calendar</span>
       </div>
-      <div class="proto-card-cta">Open prototype <span>→</span></div>
+      <div class="proto-card-cta"><span data-i18n="index.proto.cta_open">Open prototype</span> <span>→</span></div>
     </a>
 
     <a class="proto-card" href="wave1.html">
-      <div class="proto-card-meta"><span class="num">04</span> · Wave 1 player</div>
-      <h3>The <span class="em">first</span> release.</h3>
-      <p>A focused MVP slice of the player experience: auth, home, joining a game, browsing the catalog, ordering a kit. Closer to what the first real users will hold in their hand.</p>
+      <div class="proto-card-meta" data-i18n="index.proto.card4.meta"><span class="num">04</span> · Wave 1 player</div>
+      <h3 data-i18n="index.proto.card4.title">The <span class="em">first</span> release.</h3>
+      <p data-i18n="index.proto.card4.desc">A focused MVP slice of the player experience: auth, home, joining a game, browsing the catalog, ordering a kit. Closer to what the first real users will hold in their hand.</p>
       <div class="proto-card-screens">
         <span class="chip">Auth</span>
         <span class="chip">Home</span>
@@ -747,7 +874,7 @@ a { color: inherit; text-decoration: none; }
         <span class="chip">Catalog</span>
         <span class="chip">Cart</span>
       </div>
-      <div class="proto-card-cta">Open prototype <span>→</span></div>
+      <div class="proto-card-cta"><span data-i18n="index.proto.cta_open">Open prototype</span> <span>→</span></div>
     </a>
 
   </div>
@@ -755,33 +882,33 @@ a { color: inherit; text-decoration: none; }
 
 <section class="about" id="about">
   <div class="section">
-    <div class="section-label">The company</div>
-    <h2 class="section-title">Who we <span class="em">are</span>.</h2>
+    <div class="section-label" data-i18n="index.about.section_label">The company</div>
+    <h2 class="section-title" data-i18n="index.about.title">Who we <span class="em">are</span>.</h2>
     <div class="about-grid">
       <div class="about-text">
-        <p>Tasting &amp; Toasting is being built to be a wine experience company, entering the European market through Spain.</p>
-        <p>We position ourselves as multi-functional. Wine education, curated kits, hosted tastings, event organization, sommelier engagement, these are the directions. Today, we&rsquo;re in pre-launch and pre-licensing. No commercial wine activity yet.</p>
-        <p>The prototypes you see here are the design and product work we&rsquo;ve done while the legal and operational foundation is being prepared. They&rsquo;re a window into where we&rsquo;re headed, not a live storefront.</p>
-        <p>If you&rsquo;d like to be in touch, about wine, design, partnership, regulation, or just curiosity, write to us.</p>
+        <p data-i18n="index.about.p1">Tasting &amp; Toasting is being built to be a wine experience company, entering the European market through Spain.</p>
+        <p data-i18n="index.about.p2">We position ourselves as multi-functional. Wine education, curated kits, hosted tastings, event organization, sommelier engagement, these are the directions. Today, we&rsquo;re in pre-launch and pre-licensing. No commercial wine activity yet.</p>
+        <p data-i18n="index.about.p3">The prototypes you see here are the design and product work we&rsquo;ve done while the legal and operational foundation is being prepared. They&rsquo;re a window into where we&rsquo;re headed, not a live storefront.</p>
+        <p data-i18n="index.about.p4">If you&rsquo;d like to be in touch, about wine, design, partnership, regulation, or just curiosity, write to us.</p>
       </div>
       <div class="about-card">
-        <h4>Company facts</h4>
+        <h4 data-i18n="index.about.facts_label">Company facts</h4>
         <dl>
-          <dt>Parent</dt>
+          <dt data-i18n="index.about.facts.parent">Parent</dt>
           <dd>Tasting And Toasting Inc.</dd>
-          <dt>Form</dt>
-          <dd>Delaware Corporation, USA</dd>
-          <dt>Filing No.</dt>
+          <dt data-i18n="index.about.facts.form">Form</dt>
+          <dd data-i18n="index.about.facts.form_value">Delaware Corporation, USA</dd>
+          <dt data-i18n="index.about.facts.filing">Filing No.</dt>
           <dd>7494277</dd>
-          <dt>Incorporated</dt>
-          <dd>02 June 2023</dd>
-          <dt>Spanish entity</dt>
-          <dd>Tasting And Toasting SL <em>(in registration)</em></dd>
-          <dt>Operating base</dt>
-          <dd>Valencia, Spain</dd>
-          <dt>Status</dt>
-          <dd style="color: var(--gold);">Pre-launch · Pre-licensing</dd>
-          <dt>Contact</dt>
+          <dt data-i18n="index.about.facts.incorporated">Incorporated</dt>
+          <dd data-i18n="index.about.facts.incorporated_value">02 June 2023</dd>
+          <dt data-i18n="index.about.facts.spanish_entity">Spanish entity</dt>
+          <dd data-i18n="index.about.facts.spanish_value">Tasting And Toasting SL <em>(in registration)</em></dd>
+          <dt data-i18n="index.about.facts.base">Operating base</dt>
+          <dd data-i18n="index.about.facts.base_value">Valencia, Spain</dd>
+          <dt data-i18n="index.about.facts.status">Status</dt>
+          <dd style="color: var(--gold);" data-i18n="index.about.facts.status_value">Pre-launch · Pre-licensing</dd>
+          <dt data-i18n="index.about.facts.contact">Contact</dt>
           <dd><a href="mailto:info@tastingandtoasting.com" style="color: var(--ink-2); text-decoration: underline;">info@tastingandtoasting.com</a></dd>
         </dl>
       </div>
@@ -793,43 +920,43 @@ a { color: inherit; text-decoration: none; }
   <div class="tt-footer-inner">
     <div class="tt-footer-col">
       <div class="tt-footer-brand">Tasting<span class="amp">&</span>Toasting</div>
-      <p class="tt-footer-tagline">A wine experience company entering the European market. Tastings, toasts, gatherings.</p>
+      <p class="tt-footer-tagline" data-i18n="footer.tagline">A wine experience company entering the European market. Tastings, toasts, gatherings.</p>
     </div>
     <div class="tt-footer-col">
-      <h4>Prototypes</h4>
+      <h4 data-i18n="footer.col_prototypes">Prototypes</h4>
       <ul>
-        <li><a href="prototype.html">Member &amp; subscription</a></li>
-        <li><a href="game-flow.html">Game flow</a></li>
-        <li><a href="operations.html">Operations</a></li>
-        <li><a href="wave1.html">Wave 1 player</a></li>
+        <li><a href="prototype.html" data-i18n="footer.proto_member">Member &amp; subscription</a></li>
+        <li><a href="game-flow.html" data-i18n="footer.proto_game">Game flow</a></li>
+        <li><a href="operations.html" data-i18n="footer.proto_ops">Operations</a></li>
+        <li><a href="wave1.html" data-i18n="footer.proto_wave1">Wave 1 player</a></li>
       </ul>
     </div>
     <div class="tt-footer-col">
-      <h4>Coming soon</h4>
+      <h4 data-i18n="footer.col_coming_soon">Coming soon</h4>
       <ul>
-        <li><a href="toasts.html">Toasts</a></li>
-        <li><a href="sommeliers.html">Sommeliers</a></li>
+        <li><a href="toasts.html" data-i18n="topbar.toasts">Toasts</a></li>
+        <li><a href="sommeliers.html" data-i18n="topbar.sommeliers">Sommeliers</a></li>
       </ul>
     </div>
     <div class="tt-footer-col">
-      <h4>Legal</h4>
+      <h4 data-i18n="footer.col_legal">Legal</h4>
       <ul>
-        <li><a href="privacy.html">Privacy Policy</a></li>
-        <li><a href="terms.html">Terms of Service</a></li>
-        <li><a href="legal.html">Legal Notice &amp; Cookies</a></li>
+        <li><a href="privacy.html" data-i18n="footer.legal_privacy">Privacy Policy</a></li>
+        <li><a href="terms.html" data-i18n="footer.legal_terms">Terms of Service</a></li>
+        <li><a href="legal.html" data-i18n="footer.legal_notice">Legal Notice &amp; Cookies</a></li>
       </ul>
     </div>
     <div class="tt-footer-col">
-      <h4>Contact</h4>
+      <h4 data-i18n="footer.col_contact">Contact</h4>
       <ul>
         <li><a href="mailto:info@tastingandtoasting.com">info@tastingandtoasting.com</a></li>
       </ul>
     </div>
   </div>
   <div class="tt-footer-bottom">
-    <span>© 2026 Tasting And Toasting Inc. · Delaware Corp · Filing No. 7494277</span>
+    <span data-i18n="footer.copyright">© 2026 Tasting And Toasting Inc. · Delaware Corp · Filing No. 7494277</span>
     <div class="legal-jurisdictions">
-      <span>Operating subsidiary: Tasting And Toasting SL (Spain)</span>
+      <span data-i18n="footer.subsidiary">Operating subsidiary: Tasting And Toasting SL (Spain)</span>
     </div>
   </div>
 </footer>
@@ -847,5 +974,6 @@ a { color: inherit; text-decoration: none; }
     });
   });
 </script>
+<script src="assets/i18n.js"></script>
 </body>
 </html>

@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700;9..144,300:ital,wght@1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/i18n.css">
 <style>
 :root {
   --bg: #0F0B0A;
@@ -98,6 +99,11 @@ a { color: inherit; text-decoration: none; }
   animation: pulse 2s ease-in-out infinite;
 }
 @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+.topbar-right { display: flex; align-items: center; gap: 16px; }
+@media (max-width: 640px) {
+  .topbar-right .topbar-status { display: none; }
+}
+
 
 /* HERO */
 .hero {
@@ -605,48 +611,165 @@ a { color: inherit; text-decoration: none; }
 <body>
 <div class="page-grain"></div>
 
+<!-- Flag sprite inline (4KB, used by language switcher) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none;" aria-hidden="true">
+  <!-- All flags use a 3:2 aspect ratio (60x40 viewBox) for consistency. -->
+
+  <!-- ENGLISH (UK Union Jack) -->
+  <symbol id="flag-en" viewBox="0 0 60 40">
+    <rect width="60" height="40" fill="#012169"/>
+    <!-- White diagonals (St Andrew + St Patrick base) -->
+    <path d="M0,0 L60,40 M60,0 L0,40" stroke="#fff" stroke-width="8"/>
+    <!-- Red diagonals (St Patrick) -->
+    <path d="M0,0 L60,40 M60,0 L0,40" stroke="#C8102E" stroke-width="3" clip-path="url(#stp-clip)"/>
+    <!-- Big white cross (St George base) -->
+    <path d="M30,0 V40 M0,20 H60" stroke="#fff" stroke-width="13"/>
+    <!-- Big red cross (St George) -->
+    <path d="M30,0 V40 M0,20 H60" stroke="#C8102E" stroke-width="8"/>
+    <defs>
+      <clipPath id="stp-clip">
+        <polygon points="0,0 30,0 0,20"/>
+        <polygon points="60,0 30,0 60,20"/>
+        <polygon points="60,40 30,40 60,20"/>
+        <polygon points="0,40 30,40 0,20"/>
+      </clipPath>
+    </defs>
+  </symbol>
+
+  <!-- FRENCH (tricolore: bleu blanc rouge) -->
+  <symbol id="flag-fr" viewBox="0 0 60 40">
+    <rect width="20" height="40" x="0" fill="#0055A4"/>
+    <rect width="20" height="40" x="20" fill="#FFFFFF"/>
+    <rect width="20" height="40" x="40" fill="#EF4135"/>
+  </symbol>
+
+  <!-- RUSSIAN (white-blue-red horizontal) -->
+  <symbol id="flag-ru" viewBox="0 0 60 40">
+    <rect width="60" height="13.33" y="0" fill="#FFFFFF"/>
+    <rect width="60" height="13.33" y="13.33" fill="#0039A6"/>
+    <rect width="60" height="13.34" y="26.66" fill="#D52B1E"/>
+  </symbol>
+
+  <!-- SPANISH (rojo-amarillo-rojo with simplified coat placeholder) -->
+  <symbol id="flag-es" viewBox="0 0 60 40">
+    <rect width="60" height="10" y="0" fill="#AA151B"/>
+    <rect width="60" height="20" y="10" fill="#F1BF00"/>
+    <rect width="60" height="10" y="30" fill="#AA151B"/>
+    <!-- Simplified coat as small marker (placed off-center as in real flag) -->
+    <g transform="translate(18,15)">
+      <rect width="8" height="10" fill="#AD1519" opacity="0.85" rx="1"/>
+      <rect width="8" height="10" fill="none" stroke="#C7B37F" stroke-width="0.4"/>
+    </g>
+  </symbol>
+
+  <!-- UKRAINIAN (blue top, yellow bottom) -->
+  <symbol id="flag-uk" viewBox="0 0 60 40">
+    <rect width="60" height="20" y="0" fill="#0057B7"/>
+    <rect width="60" height="20" y="20" fill="#FFD700"/>
+  </symbol>
+
+  <!-- ITALIAN (verde bianco rosso) -->
+  <symbol id="flag-it" viewBox="0 0 60 40">
+    <rect width="20" height="40" x="0" fill="#009246"/>
+    <rect width="20" height="40" x="20" fill="#FFFFFF"/>
+    <rect width="20" height="40" x="40" fill="#CE2B37"/>
+  </symbol>
+
+  <!-- GERMAN (schwarz-rot-gold horizontal) -->
+  <symbol id="flag-de" viewBox="0 0 60 40">
+    <rect width="60" height="13.33" y="0" fill="#000000"/>
+    <rect width="60" height="13.33" y="13.33" fill="#DD0000"/>
+    <rect width="60" height="13.34" y="26.66" fill="#FFCE00"/>
+  </symbol>
+
+  <!-- HEBREW / Israel (white with two blue stripes and Star of David) -->
+  <symbol id="flag-he" viewBox="0 0 60 40">
+    <rect width="60" height="40" fill="#FFFFFF"/>
+    <rect width="60" height="4.5" y="5" fill="#0038B8"/>
+    <rect width="60" height="4.5" y="30.5" fill="#0038B8"/>
+    <!-- Star of David (two overlapping triangles) -->
+    <g transform="translate(30,20)" stroke="#0038B8" stroke-width="1.2" fill="none">
+      <polygon points="0,-7 6.06,3.5 -6.06,3.5"/>
+      <polygon points="0,7 6.06,-3.5 -6.06,-3.5"/>
+    </g>
+  </symbol>
+
+  <!-- PORTUGUESE (verde 2/5 + vermelho 3/5, simplified shield in middle) -->
+  <symbol id="flag-pt" viewBox="0 0 60 40">
+    <rect width="24" height="40" x="0" fill="#046A38"/>
+    <rect width="36" height="40" x="24" fill="#DA291C"/>
+    <!-- Armillary sphere placeholder (simple ring) at the join -->
+    <g transform="translate(24,20)">
+      <circle r="6" fill="#FFE000" stroke="#000" stroke-width="0.4"/>
+      <circle r="6" fill="none" stroke="#FFFFFF" stroke-width="0.4"/>
+      <rect x="-4" y="-3" width="8" height="6" fill="#FFFFFF" stroke="#C8102E" stroke-width="0.5"/>
+    </g>
+  </symbol>
+</svg>
+
+
 <header class="topbar">
   <a href="index.html" class="topbar-brand">TASTING<span class="amp">&</span>TOASTING</a>
-  <a href="index.html" class="topbar-back"><span>←</span><span>Back to site</span></a>
-  <div class="topbar-status">Coming soon</div>
+  <a href="index.html" class="topbar-back"><span>←</span><span data-i18n="topbar.back">Back to site</span></a>
+  <div class="topbar-right">
+    <div class="topbar-status" data-i18n="topbar.status_coming_soon">Coming soon</div>
+    <div class="lang-switcher">
+      <button class="lang-trigger" type="button" aria-label="Select language" aria-expanded="false">
+        <svg class="flag" viewBox="0 0 60 40"><use href="#flag-en"/></svg>
+        <span class="lang-trigger-code">EN</span>
+        <svg class="lang-chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4.5l3 3 3-3"/></svg>
+      </button>
+      <div class="lang-menu" role="menu">
+        <button class="lang-item" data-lang="en" role="menuitem"><svg class="flag" viewBox="0 0 60 40"><use href="#flag-en"/></svg><span class="lang-native">English</span><span class="lang-code">EN</span></button>
+        <button class="lang-item" data-lang="fr" role="menuitem"><svg class="flag" viewBox="0 0 60 40"><use href="#flag-fr"/></svg><span class="lang-native">Français</span><span class="lang-code">FR</span></button>
+        <button class="lang-item" data-lang="ru" role="menuitem"><svg class="flag" viewBox="0 0 60 40"><use href="#flag-ru"/></svg><span class="lang-native">Русский</span><span class="lang-code">RU</span></button>
+        <button class="lang-item" data-lang="es" role="menuitem"><svg class="flag" viewBox="0 0 60 40"><use href="#flag-es"/></svg><span class="lang-native">Español</span><span class="lang-code">ES</span></button>
+        <button class="lang-item" data-lang="uk" role="menuitem"><svg class="flag" viewBox="0 0 60 40"><use href="#flag-uk"/></svg><span class="lang-native">Українська</span><span class="lang-code">UK</span></button>
+        <button class="lang-item" data-lang="it" role="menuitem"><svg class="flag" viewBox="0 0 60 40"><use href="#flag-it"/></svg><span class="lang-native">Italiano</span><span class="lang-code">IT</span></button>
+        <button class="lang-item" data-lang="de" role="menuitem"><svg class="flag" viewBox="0 0 60 40"><use href="#flag-de"/></svg><span class="lang-native">Deutsch</span><span class="lang-code">DE</span></button>
+        <button class="lang-item" data-lang="he" role="menuitem"><svg class="flag" viewBox="0 0 60 40"><use href="#flag-he"/></svg><span class="lang-native">עברית</span><span class="lang-code">HE</span></button>
+        <button class="lang-item" data-lang="pt" role="menuitem"><svg class="flag" viewBox="0 0 60 40"><use href="#flag-pt"/></svg><span class="lang-native">Português</span><span class="lang-code">PT</span></button>
+      </div>
+    </div>
+  </div>
 </header>
 
 <!-- HERO -->
 <section class="hero">
   <div class="hero-eyebrow">
-    <span class="pill">Announcement</span>
+    <span class="pill" data-i18n="toasts.hero.eyebrow_announcement">Announcement</span>
     <span class="dot">·</span>
-    <span>The toasts side of T<span style="color:var(--wine-bright);font-style:italic;">&amp;</span>T</span>
+    <span data-i18n="toasts.hero.eyebrow_side">The toasts side of T<span style="color:var(--wine-bright);font-style:italic;">&amp;</span>T</span>
   </div>
-  <h1>
+  <h1 data-i18n="toasts.hero.title">
     A new kind of<br>
     <span class="em">toasting</span>,<br>
     quietly assisted.
   </h1>
-  <p class="hero-sub">
+  <p class="hero-sub" data-i18n="toasts.hero.sub">
     A <span class="accent">digital toastmaster</span> built into the Tasting <span class="serif-italic" style="color:var(--wine-bright);">&amp;</span> Toasting game. Toasts that know the room, the moment, and the people, drawn from a growing library of cultures and languages. <strong style="color:var(--ink);font-weight:500;">Coming soon.</strong>
   </p>
   <div class="hero-actions">
-    <a href="mailto:info@tastingandtoasting.com?subject=Toasts%20%E2%80%94%20be%20in%20touch" class="hero-btn hero-btn-primary">Be in touch <span>→</span></a>
-    <a href="#how" class="hero-btn hero-btn-ghost">How it works</a>
+    <a href="mailto:info@tastingandtoasting.com?subject=Toasts" class="hero-btn hero-btn-primary"><span data-i18n="toasts.hero.btn_touch">Be in touch</span> <span>→</span></a>
+    <a href="#how" class="hero-btn hero-btn-ghost" data-i18n="toasts.hero.btn_how">How it works</a>
   </div>
 
   <div class="hero-quote">
-    <div class="text">
+    <div class="text" data-i18n="toasts.hero.quote_text">
       "A toast is not the speech, it is the moment everyone leans in."
     </div>
-    <div class="attr">An old saying, more or less</div>
+    <div class="attr" data-i18n="toasts.hero.quote_attr">An old saying, more or less</div>
   </div>
 </section>
 
 <!-- WHY THIS, WHY NOW -->
 <section class="concept-band">
   <div class="section">
-    <div class="section-label">The thinking</div>
-    <h2 class="section-title">
+    <div class="section-label" data-i18n="toasts.thinking.label">The thinking</div>
+    <h2 class="section-title" data-i18n="toasts.thinking.title">
       Half of <span class="em">Tasting <span style="color:var(--wine-bright);">&amp;</span> Toasting</span> is the toasting.
     </h2>
-    <p class="section-intro">
+    <p class="section-intro" data-i18n="toasts.thinking.intro">
       The name was never a play on words. Tasting is what we put on the table. Toasting is what happens above it, the words that turn a dinner into a memory. We built the game side first. Now we are building the half that everyone actually quotes the next morning.
     </p>
   </div>
@@ -654,33 +777,33 @@ a { color: inherit; text-decoration: none; }
 
 <!-- THREE PILLARS: how it works (without secrets) -->
 <section class="section" id="how">
-  <div class="section-label">How it works</div>
-  <h2 class="section-title">
+  <div class="section-label" data-i18n="toasts.how.label">How it works</div>
+  <h2 class="section-title" data-i18n="toasts.how.title">
     A <span class="em">library</span>, a <span class="em">moment</span>, a <span class="em">voice</span>.
   </h2>
-  <p class="section-intro">
+  <p class="section-intro" data-i18n="toasts.how.intro">
     Three things, working together. A growing library of toasts curated by people who actually know the cultures. A sense of the moment, so the toast fits the room. And, soon, a voice that can read it aloud in the right language.
   </p>
 
   <div class="pillars">
     <div class="pillar">
-      <div class="pillar-num">01 · Library</div>
-      <div class="pillar-title">Curated by <span class="em">people</span> who know the table.</div>
-      <p class="pillar-desc">
+      <div class="pillar-num" data-i18n="toasts.pillar1.num">01 · Library</div>
+      <div class="pillar-title" data-i18n="toasts.pillar1.title">Curated by <span class="em">people</span> who know the table.</div>
+      <p class="pillar-desc" data-i18n="toasts.pillar1.desc">
         Every toast in the starting library is reviewed by native speakers and writers from the cultures they belong to. Georgian toasts read by Georgians, Jewish toasts by Jews, Spanish by Spaniards. The library grows as the community grows.
       </p>
     </div>
     <div class="pillar">
-      <div class="pillar-num">02 · Moment</div>
-      <div class="pillar-title">Toasts that <span class="em">fit</span> the room.</div>
-      <p class="pillar-desc">
+      <div class="pillar-num" data-i18n="toasts.pillar2.num">02 · Moment</div>
+      <div class="pillar-title" data-i18n="toasts.pillar2.title">Toasts that <span class="em">fit</span> the room.</div>
+      <p class="pillar-desc" data-i18n="toasts.pillar2.desc">
         When you set up a game, the host sets the tone. Birthday or wake. Old friends or strangers. Wedding eve or quiet weeknight. The right toasts are surfaced for the right moments, opening, mid-game, the final glass.
       </p>
     </div>
     <div class="pillar">
-      <div class="pillar-num">03 · Voice</div>
-      <div class="pillar-title">Spoken in your <span class="em">language</span>.</div>
-      <p class="pillar-desc">
+      <div class="pillar-num" data-i18n="toasts.pillar3.num">03 · Voice</div>
+      <div class="pillar-title" data-i18n="toasts.pillar3.title">Spoken in your <span class="em">language</span>.</div>
+      <p class="pillar-desc" data-i18n="toasts.pillar3.desc">
         Read aloud, in a voice you choose, in the language of the room. A male voice for an old grandfather's blessing, a softer voice for a wedding toast. Coming after the first launch.
       </p>
     </div>
@@ -690,11 +813,11 @@ a { color: inherit; text-decoration: none; }
 <!-- CULTURES -->
 <section class="concept-band">
   <div class="section">
-    <div class="section-label">Cultures</div>
-    <h2 class="section-title">
+    <div class="section-label" data-i18n="toasts.cultures.label">Cultures</div>
+    <h2 class="section-title" data-i18n="toasts.cultures.title">
       A toast from <span class="em">somewhere</span>.
     </h2>
-    <p class="section-intro">
+    <p class="section-intro" data-i18n="toasts.cultures.intro">
       Toasts belong to places. We are starting with the cultures we know best, and the ones our community keeps asking for. The list grows as native curators join.
     </p>
 
@@ -702,40 +825,40 @@ a { color: inherit; text-decoration: none; }
       <div class="culture">
         <div class="culture-name"><span class="em">Georgian</span></div>
         <div class="culture-native">ქართული სუფრა</div>
-        <div class="culture-meta">Tamada tradition</div>
+        <div class="culture-meta" data-i18n="toasts.cultures.georgian_meta">Tamada tradition</div>
       </div>
       <div class="culture">
         <div class="culture-name"><span class="em">Jewish</span></div>
         <div class="culture-native">לְחַיִּים</div>
-        <div class="culture-meta">L'chaim, badchan</div>
+        <div class="culture-meta" data-i18n="toasts.cultures.jewish_meta">L'chaim, badchan</div>
       </div>
       <div class="culture">
         <div class="culture-name"><span class="em">Spanish</span></div>
         <div class="culture-native">¡Salud!</div>
-        <div class="culture-meta">Brindis</div>
+        <div class="culture-meta" data-i18n="toasts.cultures.spanish_meta">Brindis</div>
       </div>
       <div class="culture">
         <div class="culture-name"><span class="em">Russian</span></div>
         <div class="culture-native">Тост</div>
-        <div class="culture-meta">Caucasian roots</div>
+        <div class="culture-meta" data-i18n="toasts.cultures.russian_meta">Caucasian roots</div>
       </div>
       <div class="culture">
         <div class="culture-name"><span class="em">Italian</span></div>
         <div class="culture-native">Cin cin</div>
-        <div class="culture-meta">Brindisi</div>
+        <div class="culture-meta" data-i18n="toasts.cultures.italian_meta">Brindisi</div>
       </div>
       <div class="culture">
         <div class="culture-name"><span class="em">French</span></div>
         <div class="culture-native">Santé</div>
-        <div class="culture-meta">Toast porté</div>
+        <div class="culture-meta" data-i18n="toasts.cultures.french_meta">Toast porté</div>
       </div>
       <div class="culture">
         <div class="culture-name"><span class="em">Greek</span></div>
         <div class="culture-native">Στην υγειά μας</div>
-        <div class="culture-meta">Symposium echoes</div>
+        <div class="culture-meta" data-i18n="toasts.cultures.greek_meta">Symposium echoes</div>
       </div>
       <div class="culture growing">
-        and growing<span class="arrow">→</span>
+        <span data-i18n="toasts.cultures.growing">and growing</span><span class="arrow">→</span>
       </div>
     </div>
   </div>
@@ -743,11 +866,11 @@ a { color: inherit; text-decoration: none; }
 
 <!-- MOMENTS in the game -->
 <section class="section">
-  <div class="section-label">Inside the game</div>
-  <h2 class="section-title">
+  <div class="section-label" data-i18n="toasts.moments.label">Inside the game</div>
+  <h2 class="section-title" data-i18n="toasts.moments.title">
     Five <span class="em">moments</span> for a glass raised.
   </h2>
-  <p class="section-intro">
+  <p class="section-intro" data-i18n="toasts.moments.intro">
     The toasts are not a separate app. They live inside the Tasting <span class="serif-italic" style="color:var(--wine-bright);">&amp;</span> Toasting game, surfacing at the moments where a real toastmaster would pause the table.
   </p>
 
@@ -756,44 +879,44 @@ a { color: inherit; text-decoration: none; }
       <li class="moment">
         <div class="moment-num">i.</div>
         <div class="moment-content">
-          <h4>The opening</h4>
-          <p>Before the first cork comes out. A line that sets the table, names the occasion, and tells the room why we are here.</p>
+          <h4 data-i18n="toasts.moment1.title">The opening</h4>
+          <p data-i18n="toasts.moment1.desc">Before the first cork comes out. A line that sets the table, names the occasion, and tells the room why we are here.</p>
         </div>
       </li>
       <li class="moment">
         <div class="moment-num">ii.</div>
         <div class="moment-content">
-          <h4>For each bottle</h4>
-          <p>Optional, when the host wants it. A short toast for the wine itself, the place it came from, the people who made it.</p>
+          <h4 data-i18n="toasts.moment2.title">For each bottle</h4>
+          <p data-i18n="toasts.moment2.desc">Optional, when the host wants it. A short toast for the wine itself, the place it came from, the people who made it.</p>
         </div>
       </li>
       <li class="moment">
         <div class="moment-num">iii.</div>
         <div class="moment-content">
-          <h4>Mid-game pause</h4>
-          <p>After a few rounds, when the energy starts to drift. A toast that pulls everyone back to the table.</p>
+          <h4 data-i18n="toasts.moment3.title">Mid-game pause</h4>
+          <p data-i18n="toasts.moment3.desc">After a few rounds, when the energy starts to drift. A toast that pulls everyone back to the table.</p>
         </div>
       </li>
       <li class="moment">
         <div class="moment-num">iv.</div>
         <div class="moment-content">
-          <h4>Before the final glass</h4>
-          <p>When the last bottle is about to be poured. A heavier toast. The one people will remember.</p>
+          <h4 data-i18n="toasts.moment4.title">Before the final glass</h4>
+          <p data-i18n="toasts.moment4.desc">When the last bottle is about to be poured. A heavier toast. The one people will remember.</p>
         </div>
       </li>
       <li class="moment">
         <div class="moment-num">v.</div>
         <div class="moment-content">
-          <h4>The closing</h4>
-          <p>After the winner is revealed, after the laughter. A toast to the night itself.</p>
+          <h4 data-i18n="toasts.moment5.title">The closing</h4>
+          <p data-i18n="toasts.moment5.desc">After the winner is revealed, after the laughter. A toast to the night itself.</p>
         </div>
       </li>
     </ul>
 
     <aside class="moments-aside">
-      <div class="label">A note for hosts</div>
-      <p>You set the moments at the start of the game. Skip the ones you don't want. Add your own. The toasts are a guide, not a script.</p>
-      <div class="signature">From the makers</div>
+      <div class="label" data-i18n="toasts.moments.aside_label">A note for hosts</div>
+      <p data-i18n="toasts.moments.aside_text">You set the moments at the start of the game. Skip the ones you don't want. Add your own. The toasts are a guide, not a script.</p>
+      <div class="signature" data-i18n="toasts.moments.aside_sig">From the makers</div>
     </aside>
   </div>
 </section>
@@ -803,14 +926,14 @@ a { color: inherit; text-decoration: none; }
   <div class="section">
     <div class="voice-grid">
       <div>
-        <div class="section-label">Coming after first launch</div>
-        <h2 class="section-title">
+        <div class="section-label" data-i18n="toasts.voice.label">Coming after first launch</div>
+        <h2 class="section-title" data-i18n="toasts.voice.title">
           Read <span class="em">aloud</span>, in your language.
         </h2>
-        <p class="section-intro">
+        <p class="section-intro" data-i18n="toasts.voice.desc">
           Voiced toasts in the languages of the table, male or female voice, your pick. Recorded yourself if you want, or borrowed from our shelf. Coming in the second wave, after the first version of the game ships.
         </p>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);" data-i18n="toasts.voice.langs">
           Russian, English, Spanish at first, Hebrew, Georgian, Italian, French, Greek to follow
         </div>
       </div>
@@ -820,7 +943,7 @@ a { color: inherit; text-decoration: none; }
           <span class="bar"></span><span class="bar"></span><span class="bar"></span>
           <span class="bar"></span><span class="bar"></span><span class="bar"></span>
         </div>
-        <div class="voice-label">A voice, soon</div>
+        <div class="voice-label" data-i18n="toasts.voice.tag">A voice, soon</div>
       </div>
     </div>
   </div>
@@ -830,17 +953,17 @@ a { color: inherit; text-decoration: none; }
 <section class="cta-band">
   <div class="section">
     <div class="cta-inner">
-      <div class="section-label" style="justify-content:center;display:inline-flex;">Be in touch</div>
-      <h2>
+      <div class="section-label" style="justify-content:center;display:inline-flex;" data-i18n="toasts.cta.label">Be in touch</div>
+      <h2 data-i18n="toasts.cta.title">
         Enjoy your party with toasts<br>
         that will be <span class="em">remembered</span>.
       </h2>
-      <p>
+      <p data-i18n="toasts.cta.body">
         We are still building. If you want to know when it ships, if you want to curate toasts in your culture, if you simply want to argue that we got something wrong, write to us. Real people, one inbox.
       </p>
       <div class="hero-actions">
-        <a href="mailto:info@tastingandtoasting.com?subject=Toasts%20%E2%80%94%20be%20in%20touch" class="hero-btn hero-btn-primary">info@tastingandtoasting.com <span>→</span></a>
-        <a href="index.html" class="hero-btn hero-btn-ghost">Back to the site</a>
+        <a href="mailto:info@tastingandtoasting.com?subject=Toasts" class="hero-btn hero-btn-primary">info@tastingandtoasting.com <span>→</span></a>
+        <a href="index.html" class="hero-btn hero-btn-ghost" data-i18n="toasts.cta.btn_back">Back to the site</a>
       </div>
     </div>
   </div>
@@ -850,43 +973,43 @@ a { color: inherit; text-decoration: none; }
   <div class="tt-footer-inner">
     <div class="tt-footer-col">
       <div class="tt-footer-brand">Tasting<span class="amp">&</span>Toasting</div>
-      <p class="tt-footer-tagline">A wine experience company entering the European market. Tastings, toasts, gatherings.</p>
+      <p class="tt-footer-tagline" data-i18n="footer.tagline">A wine experience company entering the European market. Tastings, toasts, gatherings.</p>
     </div>
     <div class="tt-footer-col">
-      <h4>Prototypes</h4>
+      <h4 data-i18n="footer.col_prototypes">Prototypes</h4>
       <ul>
-        <li><a href="prototype.html">Member &amp; subscription</a></li>
-        <li><a href="game-flow.html">Game flow</a></li>
-        <li><a href="operations.html">Operations</a></li>
-        <li><a href="wave1.html">Wave 1 player</a></li>
+        <li><a href="prototype.html" data-i18n="footer.proto_member">Member &amp; subscription</a></li>
+        <li><a href="game-flow.html" data-i18n="footer.proto_game">Game flow</a></li>
+        <li><a href="operations.html" data-i18n="footer.proto_ops">Operations</a></li>
+        <li><a href="wave1.html" data-i18n="footer.proto_wave1">Wave 1 player</a></li>
       </ul>
     </div>
     <div class="tt-footer-col">
-      <h4>Coming soon</h4>
+      <h4 data-i18n="footer.col_coming_soon">Coming soon</h4>
       <ul>
-        <li><a href="toasts.html">Toasts</a></li>
-        <li><a href="sommeliers.html">Sommeliers</a></li>
+        <li><a href="toasts.html" data-i18n="topbar.toasts">Toasts</a></li>
+        <li><a href="sommeliers.html" data-i18n="topbar.sommeliers">Sommeliers</a></li>
       </ul>
     </div>
     <div class="tt-footer-col">
-      <h4>Legal</h4>
+      <h4 data-i18n="footer.col_legal">Legal</h4>
       <ul>
-        <li><a href="privacy.html">Privacy Policy</a></li>
-        <li><a href="terms.html">Terms of Service</a></li>
-        <li><a href="legal.html">Legal Notice &amp; Cookies</a></li>
+        <li><a href="privacy.html" data-i18n="footer.legal_privacy">Privacy Policy</a></li>
+        <li><a href="terms.html" data-i18n="footer.legal_terms">Terms of Service</a></li>
+        <li><a href="legal.html" data-i18n="footer.legal_notice">Legal Notice &amp; Cookies</a></li>
       </ul>
     </div>
     <div class="tt-footer-col">
-      <h4>Contact</h4>
+      <h4 data-i18n="footer.col_contact">Contact</h4>
       <ul>
         <li><a href="mailto:info@tastingandtoasting.com">info@tastingandtoasting.com</a></li>
       </ul>
     </div>
   </div>
   <div class="tt-footer-bottom">
-    <span>© 2026 Tasting And Toasting Inc. · Delaware Corp · Filing No. 7494277</span>
+    <span data-i18n="footer.copyright">© 2026 Tasting And Toasting Inc. · Delaware Corp · Filing No. 7494277</span>
     <div class="legal-jurisdictions">
-      <span>Operating subsidiary: Tasting And Toasting SL (Spain)</span>
+      <span data-i18n="footer.subsidiary">Operating subsidiary: Tasting And Toasting SL (Spain)</span>
     </div>
   </div>
 </footer>
@@ -903,5 +1026,6 @@ a { color: inherit; text-decoration: none; }
     });
   });
 </script>
+<script src="assets/i18n.js"></script>
 </body>
 </html>
