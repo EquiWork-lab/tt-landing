@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sommeliers, in the room and in the app, Tasting &amp; Toasting</title>
+<meta name="description" content="Tasting & Toasting works alongside professional sommeliers and Spanish associations of wine service. A digital sommelier sits inside the game, helping the host or guiding solo players. Pre-launch.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0F0B0A;
+  --bg-2: #1A1413;
+  --bg-3: #241B19;
+  --ink: #F4EDE4;
+  --ink-2: #C7B8A8;
+  --ink-3: #8A7A6B;
+  --wine: #6B1E2C;
+  --wine-2: #8B2838;
+  --wine-bright: #B83246;
+  --gold: #C9A961;
+  --gold-bright: #E8C77A;
+  --green: #4A6B3D;
+  --line: rgba(244,237,228,0.08);
+  --line-2: rgba(244,237,228,0.15);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { background: var(--bg); color: var(--ink); font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+body { overflow-x: hidden; min-height: 100vh; }
+a { color: inherit; text-decoration: none; }
+.serif { font-family: 'Fraunces', serif; }
+.serif-italic { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; }
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+.page-grain {
+  position: fixed; inset: 0; pointer-events: none; z-index: 1;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='0.85' numOctaves='2' /></filter><rect width='200' height='200' filter='url(%23n)' opacity='0.4'/></svg>");
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+}
+
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0;
+  background: rgba(15,11,10,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--line);
+  z-index: 100;
+  padding: 14px 32px;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+}
+.topbar-brand { font-family: 'Fraunces', serif; font-size: 16px; letter-spacing: 0.02em; color: var(--ink); }
+.topbar-brand .amp { color: var(--wine-bright); font-style: italic; font-weight: 400; }
+.topbar-back {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ink-3);
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 12px; border: 1px solid var(--line); border-radius: 999px;
+  transition: all 0.2s ease;
+}
+.topbar-back:hover { color: var(--ink); border-color: var(--line-2); background: var(--bg-2); }
+.topbar-status {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.14em; color: var(--gold);
+  display: flex; align-items: center; gap: 8px;
+}
+.topbar-status::before {
+  content: ''; width: 6px; height: 6px; background: var(--gold);
+  border-radius: 50%; animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+/* HERO */
+.hero {
+  position: relative; padding: 140px 32px 96px;
+  max-width: 1100px; margin: 0 auto; z-index: 2;
+}
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.18em; color: var(--gold);
+  margin-bottom: 28px;
+  display: flex; gap: 16px; flex-wrap: wrap; align-items: center;
+}
+.hero-eyebrow .dot { color: var(--wine-bright); }
+.hero-eyebrow .pill {
+  border: 1px solid rgba(201, 169, 97, 0.3);
+  background: rgba(201, 169, 97, 0.06);
+  padding: 4px 10px; border-radius: 999px;
+}
+.hero h1 {
+  font-family: 'Fraunces', serif; font-weight: 300;
+  font-size: clamp(44px, 7vw, 92px);
+  line-height: 1.0;
+  letter-spacing: -0.022em;
+  margin-bottom: 32px;
+}
+.hero h1 .em { font-style: italic; font-weight: 400; color: var(--gold); }
+.hero h1 .amp { color: var(--wine-bright); font-style: italic; font-weight: 400; }
+.hero-sub {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(17px, 1.6vw, 20px);
+  line-height: 1.55; color: var(--ink-2);
+  max-width: 720px; margin-bottom: 44px;
+}
+.hero-sub .accent { color: var(--gold); font-style: italic; }
+.hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+.hero-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 16px 28px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  border-radius: 999px;
+  transition: all 0.25s ease; cursor: pointer; border: 1px solid;
+}
+.hero-btn-primary { background: var(--wine); color: var(--ink); border-color: var(--wine); }
+.hero-btn-primary:hover { background: var(--wine-bright); border-color: var(--wine-bright); transform: translateY(-1px); }
+.hero-btn-ghost { background: transparent; color: var(--ink-2); border-color: var(--line-2); }
+.hero-btn-ghost:hover { color: var(--ink); border-color: var(--ink-3); }
+
+/* TWO SIDES */
+.two-sides-band {
+  background: linear-gradient(180deg, var(--bg-2), var(--bg));
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.section {
+  max-width: 1100px; margin: 0 auto; padding: 80px 32px;
+  position: relative; z-index: 2;
+}
+.section-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink-3);
+  margin-bottom: 14px;
+  display: flex; align-items: center; gap: 12px;
+}
+.section-label::before { content: ''; width: 24px; height: 1px; background: var(--wine-bright); }
+.section-title {
+  font-family: 'Fraunces', serif; font-weight: 400;
+  font-size: clamp(32px, 4.5vw, 52px);
+  line-height: 1.1; letter-spacing: -0.012em;
+  margin-bottom: 24px; max-width: 820px;
+}
+.section-title .em { font-style: italic; color: var(--gold); font-weight: 400; }
+.section-title .amp { color: var(--wine-bright); font-style: italic; font-weight: 400; }
+.section-intro {
+  font-size: 16px; line-height: 1.7; color: var(--ink-2);
+  max-width: 720px; margin-bottom: 48px;
+}
+
+.two-sides {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 16px;
+}
+.side {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 36px 32px;
+  display: flex; flex-direction: column; gap: 14px;
+  position: relative;
+  transition: all 0.25s ease;
+}
+.side:hover { border-color: var(--line-2); background: var(--bg-3); transform: translateY(-2px); }
+.side-num {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.16em; color: var(--gold);
+}
+.side-title {
+  font-family: 'Fraunces', serif; font-weight: 400;
+  font-size: 28px; line-height: 1.15; letter-spacing: -0.01em;
+}
+.side-title .em { font-style: italic; color: var(--gold); }
+.side-desc { font-size: 14.5px; line-height: 1.65; color: var(--ink-2); }
+.side-quote {
+  font-family: 'Fraunces', serif; font-style: italic; font-weight: 300;
+  font-size: 16px; line-height: 1.5; color: var(--ink);
+  border-left: 2px solid var(--wine);
+  padding-left: 16px; margin-top: 8px;
+}
+
+/* ASSOCIATIONS */
+.assoc-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+.assoc {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 26px 24px;
+  display: flex; flex-direction: column; gap: 10px;
+  transition: all 0.25s ease;
+}
+.assoc:hover { border-color: var(--gold); background: var(--bg-3); }
+.assoc-acronym {
+  font-family: 'Fraunces', serif; font-style: italic; font-weight: 300;
+  font-size: 36px; line-height: 1; color: var(--gold);
+  letter-spacing: -0.02em;
+}
+.assoc-name {
+  font-family: 'Fraunces', serif; font-weight: 400;
+  font-size: 17px; line-height: 1.3; color: var(--ink);
+  letter-spacing: -0.005em;
+}
+.assoc-meta {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-3);
+}
+.assoc-desc {
+  font-size: 13px; line-height: 1.6; color: var(--ink-2);
+  margin-top: 4px;
+}
+.assoc-link {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--gold);
+  margin-top: auto; padding-top: 10px;
+}
+.assoc-link:hover { color: var(--gold-bright); }
+
+.assoc-disclaimer {
+  margin-top: 32px;
+  padding: 18px 22px;
+  background: rgba(244,237,228,0.03);
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--ink-3);
+  border-radius: 6px;
+  font-size: 13px; line-height: 1.65; color: var(--ink-3);
+  font-style: italic;
+}
+
+/* OFFER & ASK */
+.offer-ask {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-top: 16px;
+}
+.offer-card, .ask-card {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 36px 32px;
+}
+.offer-card { border-left: 3px solid var(--gold); }
+.ask-card { border-left: 3px solid var(--wine); }
+.offer-ask h3 {
+  font-family: 'Fraunces', serif; font-weight: 400;
+  font-size: 26px; line-height: 1.2; letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+.offer-ask h3 .em { font-style: italic; color: var(--gold); }
+.offer-ask .preface {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.15em;
+  color: var(--ink-3); margin-bottom: 24px;
+}
+.offer-ask ul { list-style: none; padding: 0; }
+.offer-ask li {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px;
+  align-items: start;
+}
+.offer-ask li:last-child { border-bottom: none; }
+.offer-ask li .marker {
+  font-family: 'Fraunces', serif; font-style: italic; font-weight: 300;
+  font-size: 22px; line-height: 1; color: var(--gold);
+  min-width: 28px;
+}
+.ask-card li .marker { color: var(--wine-bright); }
+.offer-ask li .label {
+  font-family: 'Inter', sans-serif; font-weight: 500;
+  font-size: 15px; color: var(--ink); margin-bottom: 4px;
+}
+.offer-ask li .body {
+  font-size: 13.5px; line-height: 1.6; color: var(--ink-2);
+}
+
+/* IN-APP DIGITAL SOMMELIER */
+.in-app {
+  background: linear-gradient(180deg, var(--bg-3), var(--bg-2));
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.modes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 16px;
+}
+.mode {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 36px 32px;
+  position: relative;
+  overflow: hidden;
+}
+.mode::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.mode-eyebrow {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.16em; color: var(--gold);
+  margin-bottom: 16px;
+}
+.mode-title {
+  font-family: 'Fraunces', serif; font-weight: 400;
+  font-size: 26px; line-height: 1.2; letter-spacing: -0.01em;
+  color: var(--ink); margin-bottom: 14px;
+}
+.mode-title .em { font-style: italic; color: var(--gold); }
+.mode-desc { font-size: 14.5px; line-height: 1.65; color: var(--ink-2); margin-bottom: 18px; }
+.mode-features { list-style: none; padding: 0; margin-top: 8px; }
+.mode-features li {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 13.5px; line-height: 1.55; color: var(--ink-2);
+  display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: start;
+}
+.mode-features li:last-child { border-bottom: none; }
+.mode-features li .dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--gold); margin-top: 8px;
+}
+.mode-aside-note {
+  margin-top: 32px;
+  font-size: 14px; line-height: 1.65;
+  color: var(--ink-3);
+  text-align: center;
+  font-style: italic;
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+}
+
+/* CTA */
+.cta-band { background: var(--bg-2); border-top: 1px solid var(--line); }
+.cta-inner { text-align: center; max-width: 720px; margin: 0 auto; }
+.cta-inner h2 {
+  font-family: 'Fraunces', serif; font-weight: 300;
+  font-size: clamp(32px, 5vw, 52px); line-height: 1.1;
+  letter-spacing: -0.015em; margin-bottom: 24px;
+}
+.cta-inner h2 .em { font-style: italic; color: var(--gold); }
+.cta-inner h2 .amp { color: var(--wine-bright); font-style: italic; }
+.cta-inner p { font-size: 17px; line-height: 1.65; color: var(--ink-2); margin-bottom: 36px; }
+.cta-inner .hero-actions { justify-content: center; }
+
+/* Footer */
+.tt-footer {
+  background: var(--bg-2);
+  border-top: 1px solid var(--line);
+  padding: 56px 32px 40px;
+  font-family: 'Inter', sans-serif; color: var(--ink-3);
+  position: relative; z-index: 2;
+}
+.tt-footer-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: 1.5fr 0.9fr 0.9fr 0.9fr 0.9fr; gap: 48px;
+}
+.tt-footer-brand {
+  font-family: 'Fraunces', serif; font-size: 22px;
+  color: var(--ink); margin-bottom: 14px; letter-spacing: 0.01em;
+}
+.tt-footer-brand .amp { color: var(--wine-bright); font-style: italic; font-weight: 400; }
+.tt-footer-tagline { font-size: 13px; line-height: 1.6; color: var(--ink-3); max-width: 320px; }
+.tt-footer-col h4 {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  font-weight: 500; text-transform: uppercase; letter-spacing: 0.18em;
+  color: var(--ink-3); margin-bottom: 16px;
+}
+.tt-footer-col ul { list-style: none; padding: 0; }
+.tt-footer-col li { margin-bottom: 10px; }
+.tt-footer-col a { color: var(--ink-2); font-size: 13px; transition: color 0.2s ease; }
+.tt-footer-col a:hover { color: var(--gold); }
+.tt-footer-bottom {
+  max-width: 1200px; margin: 48px auto 0; padding-top: 24px;
+  border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-3);
+}
+
+@media (max-width: 980px) {
+  .two-sides, .offer-ask, .modes-grid { grid-template-columns: 1fr; }
+  .assoc-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .topbar { padding: 12px 18px; }
+  .hero { padding: 120px 20px 64px; }
+  .section { padding: 56px 20px; }
+  .tt-footer-inner { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .tt-footer { padding: 40px 20px 32px; }
+  .tt-footer-bottom { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<div class="page-grain"></div>
+
+<header class="topbar">
+  <a href="index.html" class="topbar-brand">TASTING<span class="amp">&</span>TOASTING</a>
+  <a href="index.html" class="topbar-back"><span>←</span><span>Back to site</span></a>
+  <div class="topbar-status">Pre-launch</div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">
+    <span class="pill">Sommeliers</span>
+    <span class="dot">·</span>
+    <span>The professionals, and the app</span>
+  </div>
+  <h1>
+    Real <span class="em">sommeliers</span><br>
+    in the room.<br>
+    A digital one in the app.
+  </h1>
+  <p class="hero-sub">
+    The sommelier is the heart of any serious wine table. We are building Tasting <span class="serif-italic" style="color:var(--wine-bright);">&amp;</span> Toasting around them, not around them. We host events with professional sommeliers in Spain. And inside the app, a <span class="accent">digital sommelier</span> sits next to whoever is hosting the game, or next to every player when no one is.
+  </p>
+  <div class="hero-actions">
+    <a href="mailto:info@tastingandtoasting.com?subject=Sommelier%20collaboration" class="hero-btn hero-btn-primary">For sommeliers, write to us <span>→</span></a>
+    <a href="#in-app" class="hero-btn hero-btn-ghost">How it works in the app</a>
+  </div>
+</section>
+
+<!-- TWO SIDES -->
+<section class="two-sides-band">
+  <div class="section">
+    <div class="section-label">The two sides</div>
+    <h2 class="section-title">
+      A profession, and a <span class="em">tool</span> beside it.
+    </h2>
+    <p class="section-intro">
+      A real sommelier reads the room, the bottle, and the people. Software does not replace that, ever. But software can carry the memory, the timing, the small reminders, and let the sommelier focus on what only a sommelier can do.
+    </p>
+
+    <div class="two-sides">
+      <div class="side">
+        <div class="side-num">01 · The human</div>
+        <div class="side-title">A <span class="em">profession</span> we believe in.</div>
+        <div class="side-desc">
+          We host live tastings, dinners, and curated nights with working sommeliers across Spain. They lead. They speak. They pour. They are the reason the night is memorable. We provide the framework, the venue partners, the audience, and the operational backbone. They bring the wine and the words.
+        </div>
+        <div class="side-quote">
+          "The wine talks. The sommelier translates. We make the room quiet enough to hear them both."
+        </div>
+      </div>
+      <div class="side">
+        <div class="side-num">02 · The software</div>
+        <div class="side-title">A <span class="em">digital</span> sommelier inside the game.</div>
+        <div class="side-desc">
+          When you play Tasting <span class="serif-italic" style="color:var(--wine-bright);">&amp;</span> Toasting at home, no professional is in the room. The app fills the gap, gently. It briefs the host on the wines, suggests the order to pour, surfaces tasting notes at the right moment, and steps aside when the conversation takes over. A guide, not a teacher.
+        </div>
+        <div class="side-quote">
+          "The best technology is the one nobody notices. The toast lands. The bottle is right. The host looks confident. Quiet help, doing its work."
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ASSOCIATIONS -->
+<section class="section">
+  <div class="section-label">The world of Spanish sommellerie</div>
+  <h2 class="section-title">
+    The associations we <span class="em">look up to</span>.
+  </h2>
+  <p class="section-intro">
+    Spain has a deep, well-organized sommelier profession with national, regional, and international structures. We are not part of these institutions. We respect them. We hope to build alongside their members. If you are part of any of these and want to talk to us, write.
+  </p>
+
+  <div class="assoc-grid">
+    <div class="assoc">
+      <div class="assoc-acronym">UAES</div>
+      <div class="assoc-name">Unión Española de Asociaciones de Sumilleres</div>
+      <div class="assoc-meta">National · Founded 1994 · Member of ASI</div>
+      <div class="assoc-desc">
+        The umbrella body for all regional Spanish sommelier associations. Hosts the Spanish national championship, partners with ASI on international training, represents Spain in global sommelier dialogue.
+      </div>
+      <a class="assoc-link" href="https://sumilleres.org" target="_blank" rel="noopener">sumilleres.org →</a>
+    </div>
+    <div class="assoc">
+      <div class="assoc-acronym">ASUMAD</div>
+      <div class="assoc-name">Asociación de Sumilleres Profesionales de Madrid</div>
+      <div class="assoc-meta">Madrid · Regional</div>
+      <div class="assoc-desc">
+        The Madrid professional sommelier association. Brings together working sommeliers across hospitality, restaurants, distribution, and education. Hosts tastings, masterclasses, and mentorship for the city we are based in.
+      </div>
+      <a class="assoc-link" href="https://www.asumad.com" target="_blank" rel="noopener">asumad.com →</a>
+    </div>
+    <div class="assoc">
+      <div class="assoc-acronym">ASI</div>
+      <div class="assoc-name">Association de la Sommellerie Internationale</div>
+      <div class="assoc-meta">Global · Founded 1969 · Paris HQ</div>
+      <div class="assoc-desc">
+        The international body of national sommelier associations. Sixty-eight member countries. Runs the Best Sommelier of the World every three years. Sets the global standard for the profession we work with.
+      </div>
+      <a class="assoc-link" href="https://www.asi.info" target="_blank" rel="noopener">asi.info →</a>
+    </div>
+    <div class="assoc">
+      <div class="assoc-acronym">EEC</div>
+      <div class="assoc-name">Escuela Española de Cata</div>
+      <div class="assoc-meta">Madrid · Education · 25+ years</div>
+      <div class="assoc-desc">
+        Spain's reference school for professional sommelier training. Has formed over a thousand sommeliers across Spain, Europe, and Iberoamerica. A natural place for the next generation we hope to host on the platform.
+      </div>
+      <a class="assoc-link" href="#" onclick="return false;">Reference institution</a>
+    </div>
+  </div>
+
+  <div class="assoc-disclaimer">
+    A note. The associations above are referenced because they shape the world we work in. We have no formal affiliation, partnership, or endorsement with any of them at this stage. Any future collaboration will be announced explicitly and named on this page. We welcome conversation.
+  </div>
+</section>
+
+<!-- WHAT WE OFFER / WHAT WE ASK -->
+<section class="two-sides-band">
+  <div class="section">
+    <div class="section-label">For working sommeliers</div>
+    <h2 class="section-title">
+      A two-way <span class="em">arrangement</span>.
+    </h2>
+    <p class="section-intro">
+      If you are a sommelier reading this, here is what we offer, and what we hope to get in return. Real numbers and contract terms are negotiated case by case. The frame below is the starting point.
+    </p>
+
+    <div class="offer-ask">
+      <div class="offer-card">
+        <div class="preface">What we offer</div>
+        <h3>What you get from <span class="em">us</span>.</h3>
+        <ul>
+          <li>
+            <span class="marker">i.</span>
+            <div>
+              <div class="label">Paid event hosting</div>
+              <div class="body">We pay sommeliers to lead our live tastings, dinners, and masterclasses. Day rate or revenue share, your preference.</div>
+            </div>
+          </li>
+          <li>
+            <span class="marker">ii.</span>
+            <div>
+              <div class="label">Audience and reach</div>
+              <div class="body">A growing community of wine-curious players across Spain. Your name, your work, in front of people who care.</div>
+            </div>
+          </li>
+          <li>
+            <span class="marker">iii.</span>
+            <div>
+              <div class="label">Content publication</div>
+              <div class="body">Tasting notes, video, articles, masterclasses. Published under your name, distributed through the platform.</div>
+            </div>
+          </li>
+          <li>
+            <span class="marker">iv.</span>
+            <div>
+              <div class="label">Brand and venue collaboration</div>
+              <div class="body">Joint events with restaurants, bodegas, and wine regions. We handle logistics, ticketing, and operations.</div>
+            </div>
+          </li>
+          <li>
+            <span class="marker">v.</span>
+            <div>
+              <div class="label">A digital home</div>
+              <div class="body">A profile page on the platform, linkable, shareable, with your bio, your specialties, your upcoming events.</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="ask-card">
+        <div class="preface">What we ask</div>
+        <h3>What you give in <span class="em">return</span>.</h3>
+        <ul>
+          <li>
+            <span class="marker">i.</span>
+            <div>
+              <div class="label">Catalog curation</div>
+              <div class="body">Help us build wine sets, monthly selections, and themed kits. The taste of the platform comes from the people who taste for a living.</div>
+            </div>
+          </li>
+          <li>
+            <span class="marker">ii.</span>
+            <div>
+              <div class="label">Live event leadership</div>
+              <div class="body">Host the tastings we book. Speak. Pour. Set the tone of the night. The way only a sommelier can.</div>
+            </div>
+          </li>
+          <li>
+            <span class="marker">iii.</span>
+            <div>
+              <div class="label">Knowledge contribution</div>
+              <div class="body">Short pieces. Recorded notes. Voice clips. The kind of texture the in-app guide draws from when no human is in the room.</div>
+            </div>
+          </li>
+          <li>
+            <span class="marker">iv.</span>
+            <div>
+              <div class="label">Occasional Q&amp;A</div>
+              <div class="body">From time to time, players will have a question that needs a real answer. A short reply, sent when you can. We do not flood the inbox.</div>
+            </div>
+          </li>
+          <li>
+            <span class="marker">v.</span>
+            <div>
+              <div class="label">Honest feedback</div>
+              <div class="body">Tell us what we get wrong. The product is shaped by the people who know wine best, or it is not worth shaping.</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IN-APP DIGITAL SOMMELIER -->
+<section class="in-app" id="in-app">
+  <div class="section">
+    <div class="section-label">Inside the app</div>
+    <h2 class="section-title">
+      The digital sommelier, two <span class="em">modes</span>.
+    </h2>
+    <p class="section-intro">
+      The game runs in one of two ways, depending on whether someone is hosting the room. The digital sommelier behaves differently in each. In both cases, it is the quiet brain behind the table, never the loud voice at it.
+    </p>
+
+    <div class="modes-grid">
+      <div class="mode">
+        <div class="mode-eyebrow">Mode 01 · Hosted game</div>
+        <div class="mode-title">When a <span class="em">host</span> leads the room.</div>
+        <div class="mode-desc">
+          One player takes the role of the host, sometimes called the mediator. The app gives them a private sommelier panel: wine briefs, the order to pour, tasting notes, the toast prompts at each moment. The other players see only the game itself. The host looks like a natural sommelier.
+        </div>
+        <ul class="mode-features">
+          <li><span class="dot"></span>Private host panel with wine briefs, tasting notes, pour order</li>
+          <li><span class="dot"></span>Suggested toasts at the five game moments</li>
+          <li><span class="dot"></span>Settings for the room, pacing, scoring, optional reveals</li>
+          <li><span class="dot"></span>Turn timer to keep the table moving</li>
+          <li><span class="dot"></span>Players see only what they should see</li>
+        </ul>
+      </div>
+
+      <div class="mode">
+        <div class="mode-eyebrow">Mode 02 · Simultaneous game</div>
+        <div class="mode-title">When <span class="em">no one</span> is hosting.</div>
+        <div class="mode-desc">
+          Sometimes nobody wants to be the host. Or four friends want to taste at once and compare. In simultaneous mode, every player gets their own digital sommelier on their phone, with the same kind of guidance the host would get. The room stays equal. The wine still gets read.
+        </div>
+        <ul class="mode-features">
+          <li><span class="dot"></span>Personal sommelier on every player's device</li>
+          <li><span class="dot"></span>Synchronized rounds, everyone tastes the same wine at once</li>
+          <li><span class="dot"></span>Suggested toasts surfaced privately to each player</li>
+          <li><span class="dot"></span>Group reveal at the end, no early peeking</li>
+          <li><span class="dot"></span>Memory of past games carries forward, your taste, refined</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="mode-aside-note">
+      The host role is a permission, not a separate account. Anyone in the group can be assigned the host. Switch it any time.
+    </p>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band">
+  <div class="section">
+    <div class="cta-inner">
+      <div class="section-label" style="justify-content:center;display:inline-flex;">Be in touch</div>
+      <h2>
+        If you are a <span class="em">sommelier</span>, we want to hear from you.
+      </h2>
+      <p>
+        Working in Madrid, Valencia, anywhere in Spain. Recently certified or thirty years in the trade. Independent, restaurant-based, or tied to a bodega. Writing to us is the first step. Real people, one inbox.
+      </p>
+      <div class="hero-actions">
+        <a href="mailto:info@tastingandtoasting.com?subject=Sommelier%20collaboration" class="hero-btn hero-btn-primary">info@tastingandtoasting.com <span>→</span></a>
+        <a href="index.html" class="hero-btn hero-btn-ghost">Back to the site</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="tt-footer">
+  <div class="tt-footer-inner">
+    <div class="tt-footer-col">
+      <div class="tt-footer-brand">Tasting<span class="amp">&</span>Toasting</div>
+      <p class="tt-footer-tagline">A wine experience company entering the European market. Tastings, toasts, gatherings.</p>
+    </div>
+    <div class="tt-footer-col">
+      <h4>Prototypes</h4>
+      <ul>
+        <li><a href="prototype.html">Member &amp; subscription</a></li>
+        <li><a href="game-flow.html">Game flow</a></li>
+        <li><a href="operations.html">Operations</a></li>
+        <li><a href="wave1.html">Wave 1 player</a></li>
+      </ul>
+    </div>
+    <div class="tt-footer-col">
+      <h4>Coming soon</h4>
+      <ul>
+        <li><a href="toasts.html">Toasts</a></li>
+        <li><a href="sommeliers.html">Sommeliers</a></li>
+      </ul>
+    </div>
+    <div class="tt-footer-col">
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="terms.html">Terms of Service</a></li>
+        <li><a href="legal.html">Legal Notice &amp; Cookies</a></li>
+      </ul>
+    </div>
+    <div class="tt-footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="mailto:info@tastingandtoasting.com">info@tastingandtoasting.com</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="tt-footer-bottom">
+    <span>© 2026 Tasting And Toasting Inc. · Delaware Corp · Filing No. 7494277</span>
+    <div class="legal-jurisdictions">
+      <span>Operating subsidiary: Tasting And Toasting SL (Spain)</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const id = a.getAttribute('href').slice(1);
+      const target = document.getElementById(id);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+</body>
+</html>
